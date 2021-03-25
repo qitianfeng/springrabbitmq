@@ -1,4 +1,4 @@
-package com.springrabbitmq.route;
+package com.springrabbitmq.model.route;
 
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;

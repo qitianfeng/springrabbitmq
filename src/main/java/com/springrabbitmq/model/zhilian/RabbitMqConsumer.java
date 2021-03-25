@@ -1,4 +1,4 @@
-package com.springrabbitmq.zhilian;
+package com.springrabbitmq.model.zhilian;
 
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitHandler;

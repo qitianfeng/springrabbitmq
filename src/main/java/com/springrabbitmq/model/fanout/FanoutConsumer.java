@@ -1,4 +1,4 @@
-package com.springrabbitmq.fanout;
+package com.springrabbitmq.model.fanout;
 
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;

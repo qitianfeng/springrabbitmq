@@ -1,4 +1,4 @@
-package com.springrabbitmq.work;
+package com.springrabbitmq.model.work;
 
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
