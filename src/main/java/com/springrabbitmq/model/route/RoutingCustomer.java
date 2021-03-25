@@ -26,10 +26,15 @@ public class RoutingCustomer {
                     @QueueBinding(value = @Queue,
                             exchange = @Exchange(value = "direct",type = "direct"),
                             key = {"info"})
-
             }
     )
+    /**
+     * 出现异常，不会接受消息
+     */
     public void receive1(String message) {
+
+
+
         System.out.println(message);
     }
 }

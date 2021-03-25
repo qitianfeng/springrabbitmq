@@ -29,18 +29,18 @@ public class ProducerBatch {
         //储存未确认的消息标识
         NavigableSet<Object> confirmSet = Collections.synchronizedNavigableSet(new TreeSet<>());
 
-        channel.confirmSelect();
-        //添加监听
+        //添加监听，消息发送失败处理，异步消息确认监听器，需要在发送消息前启动
         channel.addConfirmListener(new ConfirmListener() {
             /**
              * 处理返回确认成功
-             * @param l
-             * @param b
+             * @param l 为确认的消息的编号， 从1开始自动递增用于标记当前是第几个消息
+             * @param multitude 为当前消息是否同时确认了多个    为true，则表示本次确认了多条消息，消息等于当前参数1（消息编号）的所有消息
+             *                  为false 则表示只确认了当前编号的消息
              * @throws IOException
              */
             @Override
-            public void handleAck(long l, boolean b) throws IOException {
-                if (b) {
+            public void handleAck(long l, boolean multitude) throws IOException {
+                if (multitude) {
                     confirmSet.headSet(l + 1).clear();
                 } else {
                     confirmSet.remove(l);
@@ -49,28 +49,27 @@ public class ProducerBatch {
 
             /**
              * 处理返回失败
-             * @param l
-             * @param b
+             * @param l 为没有被确认的消息，需要重新进行消息补发
+             * @param multitude  如果为true，则表示小于当前编号的所以的消息可能都没有发送成功需要进行消息的补发
+             *                   为false，则表示当前编号的消息没法发送成功需要进行补发
              * @throws IOException
              */
-
             @Override
-            public void handleNack(long l, boolean b) throws IOException {
-                if (b) {
+            public void handleNack(long l, boolean multitude) throws IOException {
+                if (multitude) {
                     confirmSet.headSet(l + 1).clear();
                 } else {
                     confirmSet.remove(l);
                 }
             }
         });
-        //同步发送多条消息
+        //发送多条消息
         for (int i = 0; i < 15; i++) {
 
             long tag = channel.getNextPublishSeqNo();
             channel.basicPublish(exchangeName, routingKey, MessageProperties.PERSISTENT_TEXT_PLAIN, ("成功发送消息" + i).getBytes(StandardCharsets.UTF_8));
             confirmSet.add(tag);
         }
-        channel.waitForConfirmsOrDie();
 
         RabbitUtils.close(channel, connection);
     }
