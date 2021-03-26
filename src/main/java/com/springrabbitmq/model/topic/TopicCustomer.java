@@ -27,6 +27,7 @@ public class TopicCustomer {
             }
     )
     public void receive2(String message) {
+
         System.out.println(message);
     }
 }

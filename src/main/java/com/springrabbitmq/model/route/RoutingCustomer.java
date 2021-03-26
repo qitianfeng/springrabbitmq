@@ -14,7 +14,6 @@ public class RoutingCustomer {
                     @QueueBinding(value = @Queue,
                             exchange = @Exchange(value = "direct",type = "direct"),
                     key = {"error"})
-
             }
     )
     public void receive(String message) {

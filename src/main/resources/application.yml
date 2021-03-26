@@ -7,3 +7,19 @@ spring:
     username: ems
     password: 123
     virtual-host: /ems
+
+
+# 发送者开启confirm机制
+    publisher-confirms: true
+
+#发送者开启return确认机制
+    publisher-returns: true
+
+# 设置消费端手动ACK
+    listener:
+      simple:
+        acknowledge-mode: manual
+
+# 是否支持重试
+        retry:
+          enabled: true
