@@ -20,7 +20,7 @@ public class ReceiveMsg {
     })
     public void receive(byte[] msg, Channel channel, Message message) {
         try {
-            int i  =1/0;
+//            int i  =1/0;
             System.out.println("111111-----------------------------------------" + new String(msg));
             //消息确认被消费
             channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
