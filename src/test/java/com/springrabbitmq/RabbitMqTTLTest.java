@@ -16,12 +16,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 
 @SpringBootTest(classes = SRApplication.class)
 @RunWith(SpringRunner.class)
-public class RabbitMqTest1 {
+public class RabbitMqTTLTest {
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
@@ -35,33 +37,36 @@ public class RabbitMqTest1 {
     @Test
     public void sendMsg() {
 
-        String exchange = "confirmExchange";
-        String routingKey = "info";
+        String exchange = "direct.pay.exchange";
+        String routingKey = "orderPay";
         String msg = "消息来了，速速解决！！！！！！！！！！！";
 
-        /**
-         * 确保消息发送失败后可以进行重新返回到队列中
-         *
-         */
+/**
+ * 确保消息发送失败后可以进行重新返回到队列中
+ *
+ */
         rabbitTemplate.setMandatory(true);
         /**
          * 消息投递到失败队列的回调处理
          */
         rabbitTemplate.setReturnCallback(returnCallbackService);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
 
-        rabbitTemplate.setConfirmCallback(confirmCallBackService);
+        for (int i = 0; i < 10; i++) {
 
-        //发送消息
-        for (int i = 0; i < 5; i++) {
-            rabbitTemplate.convertAndSend(exchange, routingKey, msg.getBytes(StandardCharsets.UTF_8), new MessagePostProcessor() {
+            //发送消息
+            rabbitTemplate.convertAndSend(exchange, routingKey, (i + " ----- " + msg).getBytes(StandardCharsets.UTF_8), new MessagePostProcessor() {
                         @Override
                         public Message postProcessMessage(Message message) throws AmqpException {
-                            message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+                            message.getMessageProperties().setExpiration("15000");
+//                            message.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
                             return message;
                         }
                     },
                     new CorrelationData(UUID.randomUUID().toString())
             );
+            System.out.println(i + "---------------------消息发送成功！！！！");
         }
+        while (true) ;
     }
 }

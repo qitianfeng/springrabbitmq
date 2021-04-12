@@ -43,14 +43,7 @@ public class ReceiveMsg {
                 } catch (IOException ioException) {
                     ioException.printStackTrace();
                 }
-//                try {
-//                    //消息进行重发
-//                    channel.basicPublish(message.getMessageProperties().getReceivedExchange(),
-//                            message.getMessageProperties().getReceivedRoutingKey(), MessageProperties.PERSISTENT_TEXT_PLAIN
-//                            , msg);
-//                } catch (IOException ioException) {
-//                    ioException.printStackTrace();
-//                }
+
             }
         }
     }
